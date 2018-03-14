@@ -227,6 +227,21 @@ class Events:
 									Commands.error(chan, 'You don\'t have an account!', 'use !register to make an account')
 							else:
 								Commands.error(chan, 'Exchange is down for scheduled maintenance!', 'try again later')
+						elif cmd == 'portfolio':
+							if nick in Bot.db['wallet']:
+								total = 0
+								for symbol in Bot.db['wallet'][nick]:
+									amount = Bot.db['wallet'][nick][symbol]
+									if symbol == 'USD':
+										value  = amount
+									else:
+										value = float(CMC.get()[symbol]['price_usd'])*amount
+									total += float(value)
+								Commands.sendmsg(chan, color('${:,}'.format(total), constants.green))
+							elif nick in Bot.db['verify']:
+								Commands.error(chan, 'Your account is not verified yet!', 'try again later')
+							else:
+								Commands.error(chan, 'You don\'t have an account!', 'use !register to make an account')
 						elif cmd == 'register':
 							if not Bot.maintenance:
 								if nick not in Bot.db['verify'] and nick not in Bot.db['wallet']:

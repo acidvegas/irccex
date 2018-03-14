@@ -56,6 +56,7 @@ There is a loop that runs to randomly put the exchange in maintenance mode, whic
 | --- | --- |
 | !bank | Return your total bank account balance. |
 | !cashout | Deposit all your USD to your bank account. |
+| !portfolio | Total USD value of your wallet. |
 | !register | Register an exchange account. |
 | !rich | Return the top 10 richest bank accounts. |
 | !send \<nick> \<amount> \<symbol> | Send \<amount> of \<symbol> to \<nick>. |
