@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# IRC Cryptocurrency Exchange Bot (IRCCEX)
+# IRC Cryptocurrency Exchange (IRCCEX)
 # Developed by acidvegas in Python
 # https://git.supernets.org/acidvegas/irccex
 # irccex.py

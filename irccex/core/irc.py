@@ -172,24 +172,19 @@ class Events:
 					cmd  = args[0][1:]
 					if len(args) == 1:
 						if msg == '@irccex':
-							Commands.sendmsg(chan, constants.bold + 'IRC Cryptocurrency Exchange Bot (IRCCEX) - Developed by acidvegas in Python - https://git.supernets.org/acidvegas/irccex')
+							Commands.sendmsg(chan, constants.bold + 'IRC Cryptocurrency Exchange (IRCCEX) - Developed by acidvegas in Python - https://git.supernets.org/acidvegas/irccex')
 						elif msg.startswith('$'):
 							msg = msg.upper()
 							if ',' in msg:
-								coin_list  = list(msg[1:].split(','))[:10]
-								data_lines = list()
-								for coin in coin_list:
-									if coin in CMC.get():
-										data_lines.append(CMC.get()[coin])
-								if data_lines:
-									if len(data_lines) == 1:
-										coin = data_lines[0]
-										Commands.sendmsg(chan, functions.coin_info(coin))
-									else:
-										Commands.sendmsg(chan, color('  Symbol       Value           1H          24H           7D         24H Volume        Market Cap    ', constants.black, constants.light_grey))
-										for line in data_lines:
-											Commands.sendmsg(chan, functions.coin_info(line, True))
-											time.sleep(config.throttle.msg)
+								coins = list(msg[1:].split(','))[:10]
+								data  = [CMC.get()[coin] for coin in coins if coin in CMC.get()]
+								if len(data) == 1:
+									coin = data[0]
+									Commands.sendmsg(chan, functions.coin_info(coin))
+								elif len(data) > 1:
+									for line in functions.coin_table(data):
+										Commands.sendmsg(chan, line)
+										time.sleep(config.throttle.msg)
 								else:
 									Commands.error(chan, 'Invalid cryptocurrency names!')
 							else:
@@ -233,7 +228,7 @@ class Events:
 								for symbol in Bot.db['wallet'][nick]:
 									amount = Bot.db['wallet'][nick][symbol]
 									if symbol == 'USD':
-										value  = amount
+										value = amount
 									else:
 										value = float(CMC.get()[symbol]['price_usd'])*amount
 									total += float(value)
@@ -262,9 +257,8 @@ class Events:
 								Commands.error(chan, 'Yall broke...')
 						elif cmd == 'top':
 							data = list(CMC.get().values())[:10]
-							Commands.sendmsg(chan, color('  Symbol       Value           1H          24H           7D         24H Volume        Market Cap    ', constants.black, constants.light_grey))
-							for item in data:
-								Commands.sendmsg(chan, functions.coin_info(item, True))
+							for line in functions.coin_table(data):
+								Commands.sendmsg(chan, line)
 								time.sleep(config.throttle.msg)
 						elif cmd == 'wallet':
 							if nick in Bot.db['wallet']:
@@ -298,10 +292,26 @@ class Events:
 								for item in data:
 									sorted_data[item] = float(data[item][option])
 								bottom_data = sorted(sorted_data, key=sorted_data.get, reverse=True)[-10:]
-								Commands.sendmsg(chan, color('  Symbol       Value           1H          24H           7D         24H Volume        Market Cap    ', constants.black, constants.light_grey))
-								for coin in bottom_data:
-									Commands.sendmsg(chan, functions.coin_info(CMC.get()[coin], True))
+								data = [CMC.get()[coin] for coin in bottom_data]
+								for line in functions.coin_table(data):
+									Commands.sendmsg(chan, line)
 									time.sleep(config.throttle.msg)
+						elif cmd == 'drop':
+							if nick in Bot.db['wallet']:
+								symbol = args[1]
+								if symbol in Bot.db['wallet'][nick]:
+									value = Bot.db['wallet'][nick]*CMC.get()[symbol]['price_usd']
+									if value < config.limit.trade:
+										del Bot.db['wallet'][nick][symbol]
+										Commands.sendmsg(chan, 'Dropped!')
+									else:
+										Commands.sendmsg(chan, 'Insufficent funds.', '${:,} or less'.format(config.limit.trade))
+								else:
+									Commands.error(chan, 'Invalid option!')
+							elif nick in Bot.db['verify']:
+								Commands.error(chan, 'Your account is not verified yet!', 'try again later')
+							else:
+								Commands.error(chan, 'You don\'t have an account!', 'use !register to make an account')
 						elif cmd == 'top':
 							option  = args[1]
 							options = {'1h':'percent_change_1h','24h':'percent_change_24h','7d':'percent_change_7d','value':'price_usd','volume':'24h_volume_usd'}
@@ -315,9 +325,9 @@ class Events:
 								for item in data:
 									sorted_data[item] = float(data[item][option])
 								top_data = sorted(sorted_data, key=sorted_data.get, reverse=True)[:10]
-								Commands.sendmsg(chan, color('  Symbol       Value           1H          24H           7D         24H Volume        Market Cap    ', constants.black, constants.light_grey))
-								for coin in top_data:
-									Commands.sendmsg(chan, functions.coin_info(CMC.get()[coin], True))
+								data = [CMC.get()[coin] for coin in top_data]
+								for line in functions.coin_table(data):
+									Commands.sendmsg(chan, line)
 									time.sleep(config.throttle.msg)
 					elif len(args) == 3:
 						if cmd == 'trade':
@@ -524,7 +534,8 @@ class Events:
 			Commands.error(chan, 'Command threw an exception.', ex)
 
 	def nick_in_use():
-		debug.error('The bot is already running or nick is in use.')
+		config.ident.nickname = 'IRCCEX_' + str(functions.random_int(10,99))
+		Commands.nick(config.ident.nickname)
 
 	def handle(data):
 		args = data.split()
@@ -579,6 +590,7 @@ class Loops:
 					Bot.db['wallet'][nick] = {'USD':config.limits.init}
 					del Bot.db['verify'][nick]
 					Commands.sendmsg(nick, 'Your account is now verified! Here is ${:,} to start trading!'.format(config.limits.init))
+					time.sleep(config.throttle.msg)
 			except Exception as ex:
 				debug.error('Error occured in the verify loop!', ex)
 			finally:
