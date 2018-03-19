@@ -296,22 +296,6 @@ class Events:
 								for line in functions.coin_table(data):
 									Commands.sendmsg(chan, line)
 									time.sleep(config.throttle.msg)
-						elif cmd == 'drop':
-							if nick in Bot.db['wallet']:
-								symbol = args[1]
-								if symbol in Bot.db['wallet'][nick]:
-									value = Bot.db['wallet'][nick]*CMC.get()[symbol]['price_usd']
-									if value < config.limit.trade:
-										del Bot.db['wallet'][nick][symbol]
-										Commands.sendmsg(chan, 'Dropped!')
-									else:
-										Commands.sendmsg(chan, 'Insufficent funds.', '${:,} or less'.format(config.limit.trade))
-								else:
-									Commands.error(chan, 'Invalid option!')
-							elif nick in Bot.db['verify']:
-								Commands.error(chan, 'Your account is not verified yet!', 'try again later')
-							else:
-								Commands.error(chan, 'You don\'t have an account!', 'use !register to make an account')
 						elif cmd == 'top':
 							option  = args[1]
 							options = {'1h':'percent_change_1h','24h':'percent_change_24h','7d':'percent_change_7d','value':'price_usd','volume':'24h_volume_usd'}
@@ -496,19 +480,19 @@ class Events:
 																	Bot.db['wallet'][receiver][symbol] += fee_amount
 																	Bot.db['wallet'][nick][symbol] -= amount
 																	Bot.cleanup(nick)
-																	Commands.sendmsg(receiver, '{0} just sent you {1} {2}! {3}'.format(color(nick, constants.light_blue), fee_amount, symbol, color('(${0})'.format(functions.clean_value(usd_amount)), constants.grey)))
+																	Commands.sendmsg(receiver, '{0} just sent you {1} {2}! {3}'.format(color(nick, constants.light_blue), fee_amount, symbol, color('({0})'.format(functions.clean_value(usd_amount)), constants.grey)))
 																	Commands.sendmsg(chan, 'Sent!')
 																else:
 																	if len(Bot.db['wallet'][nick]) < config.limits.assets:
 																		Bot.db['wallet'][receiver][symbol] = fee_amount
 																		Bot.db['wallet'][nick][symbol] -= amount
 																		Bot.cleanup(nick)
-																		Commands.sendmsg(receiver, '{0} just sent you {1} {2}! {3}'.format(color(nick, constants.light_blue), fee_amount, symbol, color('(${0})'.format(functions.clean_value(usd_amount)), constants.grey)))
+																		Commands.sendmsg(receiver, '{0} just sent you {1} {2}! {3}'.format(color(nick, constants.light_blue), fee_amount, symbol, color('({0})'.format(functions.clean_value(usd_amount)), constants.grey)))
 																		Commands.sendmsg(chan, 'Sent!')
 																	else:
 																		Commands.error(chan, f'User can\'t hold more than {config.limits.assets} assets!')
 															else:
-																Commands.error(chan, 'Invalid send amount.', f'${config.limittrade} minimum')
+																Commands.error(chan, 'Invalid send amount.', f'${config.limit.trade} minimum')
 														else:
 															Commands.error(chan, 'Insufficient funds.')
 													else:
