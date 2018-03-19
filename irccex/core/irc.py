@@ -232,7 +232,7 @@ class Events:
 									else:
 										value = float(CMC.get()[symbol]['price_usd'])*amount
 									total += float(value)
-								Commands.sendmsg(chan, color('${:,}'.format(total), constants.green))
+								Commands.sendmsg(chan, color('${:,}'.format(int(total)), constants.green))
 							elif nick in Bot.db['verify']:
 								Commands.error(chan, 'Your account is not verified yet!', 'try again later')
 							else:
