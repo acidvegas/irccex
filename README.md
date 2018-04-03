@@ -2,6 +2,7 @@
 A fantasy cryptocurrency trading channel bot for the Internet Relay Chat (IRC) protocol.
 
 *"You can pretend trade currencies, instead of trade pretend currencies!"*
+*"this bot is begging to be used for not playin'"* ~ yuritrue
 
 ###### Requirments
  - [Python](https://www.python.org/downloads/) *(**Note:** This script was developed to be used with the latest version of Python.)*
@@ -28,15 +29,14 @@ There is a loop that runs to randomly put the exchange in maintenance mode, whic
 ###### Fees & Minimums
 | Command | Fee | Minimum |
 | --- | --- | --- |
-| !cashout | 2% | $1500 USD Balance |
-| !send | 1% | $1200 Balance |
+| !cashout | 2% | $5000 USD Balance |
+| !send | 1% | $2500 Balance |
 | !trade | 0.5% | $5 |
 
 ###### General Commands
 | Command | Description |
 | --- | --- |
 | @irccex | Information about the bot. |
-| @irccex help | Information about the commands. |
 
 ###### CoinMarketCap Commands
 | Command | Description |
@@ -55,11 +55,12 @@ There is a loop that runs to randomly put the exchange in maintenance mode, whic
 | Command | Description |
 | --- | --- |
 | !bank | Return your total bank account balance. |
-| !cashout | Deposit all your USD to your bank account. |
+| !cashout [msg] | Deposit all your USD to your bank account and optionally leave the [msg] message for the !rich list. |
 | !portfolio | Total USD value of your wallet. |
 | !register | Register an exchange account. |
 | !rich | Return the top 10 richest bank accounts. |
 | !send \<nick> \<amount> \<symbol> | Send \<amount> of \<symbol> to \<nick>. |
+| !stats | Statistics of the exchange. |
 | !trade \<pair> \<amount> | Trade \<amount> between \<pair>. |
 | !wallet | View your exchange wallet. |
 

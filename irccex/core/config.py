@@ -42,9 +42,10 @@ class settings:
 
 class limits:
 	assets  = 10   # Maximum number of assets held
-	cashout = 1500 # Minimum USD required to !cashout
+	cashout = 5000 # Minimum USD required to !cashout
 	init    = 1000 # Initial USD for people who !register
-	send    = 1200 # Minimum balance required for !send
+	send    = 2500 # Minimum balance required for !send
+	reward  = 777  # Reward in USD for !bang
 	trade   = 5    # Minimum USD amount for !trade
 
 class fees:

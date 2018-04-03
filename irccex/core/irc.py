@@ -32,6 +32,7 @@ class IRC(object):
 		self.db          = {'bank':dict(),'verify':dict(),'wallet':dict()}
 		self.last        = 0
 		self.maintenance = False
+		self.reward      = False
 		self.slow        = False
 		self.sock        = None
 
@@ -42,6 +43,7 @@ class IRC(object):
 			debug.alert('Restored database!')
 		threading.Thread(target=Loops.backup).start()
 		threading.Thread(target=Loops.maintenance).start()
+		threading.Thread(target=Loops.reward).start()
 		threading.Thread(target=Loops.verify).start()
 		self.connect()
 
@@ -170,7 +172,39 @@ class Events:
 					Bot.slow = False
 					args = msg.split()
 					cmd  = args[0][1:]
-					if len(args) == 1:
+					if cmd == 'cashout':
+						if not Bot.maintenance:
+							if nick in Bot.db['wallet']:
+								if 'USD' in Bot.db['wallet'][nick]:
+									if Bot.db['wallet'][nick]['USD'] >= config.limits.cashout:
+										profit = Bot.db['wallet'][nick]['USD']-config.limits.init
+										amount = functions.fee(profit, config.fees.cashout)
+										if nick not in Bot.db['bank']:
+											if len(args) > 1:
+												cashout_msg = ' '.join(args[1:])
+											else:
+												cashout_msg = 'IM RICH BITCH !!!'
+											Bot.db['bank'][nick] = (amount, cashout_msg)
+										else:
+											last_amount, last_msg = Bot.db['bank'][nick]
+											if len(args) > 1:
+												cashout_msg = ' '.join(args[1:])[100:]
+											else:
+												cashout_msg = last_msg
+											Bot.db['bank'][nick] = (last_amount+amount, cashout_msg)
+										Bot.db['wallet'][nick]['USD'] = config.limits.init
+										Commands.sendmsg(chan, 'Cashed out {0} to your bank account! {1}'.format(color('${:,}'.format(int(amount)), constants.green), color('(current balance: ${:,})'.format(int(Bot.db['bank'][nick][0])), constants.grey)))
+									else:
+										Commands.error(chan, 'Insufficent funds.', '${:,} minimum'.format(config.limits.cashout))
+								else:
+									Commands.error(chan, 'Insufficent funds.', 'you have no USD in your account')
+							elif nick in Bot.db['verify']:
+								Commands.error(chan, 'Your account is not verified!', 'try again later')
+							else:
+								Commands.error(chan, 'You don\'t have an account!', 'use !register to make an account')
+						else:
+							Commands.error(chan, 'Exchange is down for scheduled maintenance!', 'try again later')
+					elif len(args) == 1:
 						if msg == '@irccex':
 							Commands.sendmsg(chan, constants.bold + 'IRC Cryptocurrency Exchange (IRCCEX) - Developed by acidvegas in Python - https://git.supernets.org/acidvegas/irccex')
 						elif msg.startswith('$'):
@@ -194,34 +228,24 @@ class Events:
 										Commands.sendmsg(chan, functions.coin_info(CMC.get()[coin]))
 									else:
 										Commands.error(chan, 'Invalid cryptocurrency name!')
-						elif cmd == 'bank':
-							if nick in Bot.db['bank']:
-								Commands.sendmsg(chan, color('${:,}'.format(int(Bot.db['bank'][nick])), constants.green))
-							else:
-								Commands.error(chan, 'You don\'t have any money in the bank!', 'use !cashout to put money in the bank')
-						elif cmd == 'cashout':
-							if not Bot.maintenance:
+						elif cmd == 'bang':
+							if Bot.reward:
 								if nick in Bot.db['wallet']:
+									Bot.reward = False
 									if 'USD' in Bot.db['wallet'][nick]:
-										if Bot.db['wallet'][nick]['USD'] >= config.limits.cashout:
-											profit = Bot.db['wallet'][nick]['USD']-config.limits.init
-											amount = functions.fee(profit, config.fees.cashout)
-											if nick not in Bot.db['bank']:
-												Bot.db['bank'][nick] = amount
-											else:
-												Bot.db['bank'][nick] += amount
-											Bot.db['wallet'][nick]['USD'] = config.limits.init
-											Commands.sendmsg(chan, 'Cashed out {0} to your bank account! {1}'.format(color('${:,}'.format(int(amount)), constants.green), color('(current balance: ${:,})'.format(int(Bot.db['bank'][nick])), constants.grey)))
-										else:
-											Commands.error(chan, 'Insufficent funds.', '${:,} minimum'.format(config.limits.cashout))
+										Bot.db['wallet'][nick]['USD'] += config.limits.reward
 									else:
-										Commands.error(chan, 'Insufficent funds.', 'you have no USD in your account')
+										Bot.db['wallet'][nick]['USD'] = config.limits.reward
+									Commands.sendmsg(chan, 'You won the {0} prize!'.format(color('${:,}'.format(config.limits.reward), constants.green)))
 								elif nick in Bot.db['verify']:
 									Commands.error(chan, 'Your account is not verified!', 'try again later')
 								else:
 									Commands.error(chan, 'You don\'t have an account!', 'use !register to make an account')
+						elif cmd == 'bank':
+							if nick in Bot.db['bank']:
+								Commands.sendmsg(chan, color('${:,}'.format(int(Bot.db['bank'][nick][0])), constants.green))
 							else:
-								Commands.error(chan, 'Exchange is down for scheduled maintenance!', 'try again later')
+								Commands.error(chan, 'You don\'t have any money in the bank!', 'use !cashout to put money in the bank')
 						elif cmd == 'portfolio':
 							if nick in Bot.db['wallet']:
 								total = 0
@@ -248,13 +272,32 @@ class Events:
 								Commands.error(chan, 'Exchange is down for scheduled maintenance!', 'try again later')
 						elif cmd == 'rich':
 							if Bot.db['bank']:
-								richest = sorted(Bot.db['bank'], key=Bot.db['bank'].get, reverse=True)[:10]
+								clean_bank = dict()
+								for item in Bot.db['bank']:
+									clean_bank[item] = Bot.db['bank'][item][0]
+								richest = sorted(clean_bank, key=clean_bank.get, reverse=True)[:10]
 								for user in richest:
-									Commands.sendmsg(chan, '[{0}] {1} {2}'.format(color(richest.index(user)+1, constants.pink), user.ljust(15), color('${:,}'.format(int(Bot.db['bank'][user])), constants.green)))
+									Commands.sendmsg(chan, '[{0}] {1} {2} {3}'.format(color(richest.index(user)+1, constants.pink), user.ljust(15), color('${:,}'.format(int(Bot.db['bank'][user][0])).ljust(13), constants.green), Bot.db['bank'][user][1]))
 									time.sleep(config.throttle.msg)
 								Commands.sendmsg(chan, '^ this could be u but u playin...')
 							else:
 								Commands.error(chan, 'Yall broke...')
+						elif cmd == 'stats':
+							total = 0
+							for item in Bot.db['bank']:
+								total += Bot.db['bank'][item][0]
+							Commands.sendmsg(chan, '{0} {1} {2}'.format(color('Bank       :', constants.white), '{:,}'.format(len(Bot.db['bank'])).ljust(6), color('(${:,})'.format(int(total)), constants.grey)))
+							Commands.sendmsg(chan, '{0} {1:,}'.format(color('Unverified :', constants.white), len(Bot.db['verify'])))
+							total = 0
+							for user in Bot.db['wallet']:
+								for symbol in Bot.db['wallet'][user]:
+									amount = Bot.db['wallet'][user][symbol]
+									if symbol == 'USD':
+										value = amount
+									else:
+										value = float(CMC.get()[symbol]['price_usd'])*amount
+									total += float(value)
+							Commands.sendmsg(chan, '{0} {1} {2}'.format(color('Wallets    :', constants.white), '{:,}'.format(len(Bot.db['wallet'])).ljust(5), color('(${:,})'.format(int(total)), constants.grey)))
 						elif cmd == 'top':
 							data = list(CMC.get().values())[:10]
 							for line in functions.coin_table(data):
@@ -483,7 +526,7 @@ class Events:
 																	Commands.sendmsg(receiver, '{0} just sent you {1} {2}! {3}'.format(color(nick, constants.light_blue), fee_amount, symbol, color('({0})'.format(functions.clean_value(usd_amount)), constants.grey)))
 																	Commands.sendmsg(chan, 'Sent!')
 																else:
-																	if len(Bot.db['wallet'][nick]) < config.limits.assets:
+																	if len(Bot.db['wallet'][receiver]) < config.limits.assets:
 																		Bot.db['wallet'][receiver][symbol] = fee_amount
 																		Bot.db['wallet'][nick][symbol] -= amount
 																		Bot.cleanup(nick)
@@ -548,7 +591,7 @@ class Events:
 class Loops:
 	def backup():
 		while True:
-			time.sleep(21600) # 6H
+			time.sleep(3600) # 1H
 			with open('data/db.pkl', 'wb') as db_file:
 				pickle.dump(Bot.db, db_file, pickle.HIGHEST_PROTOCOL)
 			debug.irc('Database backed up!')
@@ -559,12 +602,22 @@ class Loops:
 				time.sleep(functions.random_int(864000, 2592000)) # 10D - 30D
 				Bot.maintenance = True
 				Commands.action(config.connection.channel, color('Exchange is going down for scheduled maintenance!', constants.red))
-				time.sleep(functions.random_int(3600, 86400))   # 1H - 1D
+				time.sleep(functions.random_int(3600, 86400)) # 1H - 1D
 				Bot.maintenance = False
 				Commands.action(config.connection.channel, color('Maintenance complete! Exchange is back online!', constants.green))
 			except Exception as ex:
 				Bot.maintenance = False
 				debug.error('Error occured in the maintenance loop!', ex)
+
+	def reward():
+		while True:
+			try:
+				time.sleep(functions.random_int(3600, 10800)) # 1D - 3D
+				if not Bot.reward and not Bot.maintenance:
+					Commands.sendmsg(config.connection.channel, '[{0}] The first person to type {1} wins a prize!'.format(color('ALERT', constants.green), color('!bang', constants.light_blue)))
+					Bot.reward = True
+			except Exception as ex:
+				debug.error('Error occured in the reward loop!', ex)
 
 	def verify():
 		while True:
