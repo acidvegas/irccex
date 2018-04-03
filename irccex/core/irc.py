@@ -134,8 +134,11 @@ class Commands:
 	def raw(msg):
 		Bot.sock.send(bytes(msg + '\r\n', 'utf-8'))
 
-	def sendmsg(target, msg):
-		Commands.raw(f'PRIVMSG {target} :{msg}')
+	def sendmsg(target, msg, detail=None):
+		if detail:
+			Commands.sendmsg(target, '{0} {1}'.format(msg, color('({0})'.format(detail), constants.grey)))
+		else:
+			Commands.raw(f'PRIVMSG {target} :{msg}')
 
 class Events:
 	def connect():
@@ -396,13 +399,13 @@ class Events:
 																		Bot.db['wallet'][nick][from_symbol] -= amount
 																		Bot.db['wallet'][nick][to_symbol] += recv_amount
 																		Bot.cleanup(nick)
-																		Commands.sendmsg(chan, 'Trade successful!')
+																		Commands.sendmsg(chan, 'Trade successful!', 'Traded {0} {1} for {2} {3}'.format(functions.clean_float(amount), from_symbol, functions.clean_float(recv_amount), to_symbol))
 																	else:
 																		if len(Bot.db['wallet'][nick]) < config.limits.assets:
 																			Bot.db['wallet'][nick]['USD'] -= amount
 																			Bot.db['wallet'][nick][to_symbol] = recv_amount
 																			Bot.cleanup(nick)
-																			Commands.sendmsg(chan, 'Trade successful!')
+																			Commands.sendmsg(chan, 'Trade successful!', 'Traded {0} {1} for {2} {3}'.format(functions.clean_float(amount), from_symbol, functions.clean_float(recv_amount), to_symbol))
 																		else:
 																			Commands.error(chan, f'You can\'t hold more than {config.limits.assets} assets!')
 																else:
@@ -415,13 +418,13 @@ class Events:
 																		Bot.db['wallet'][nick][from_symbol] -= amount
 																		Bot.db['wallet'][nick][to_symbol] += recv_amount
 																		Bot.cleanup(nick)
-																		Commands.sendmsg(chan, 'Trade successful!')
+																		Commands.sendmsg(chan, 'Trade successful!', 'Traded {0} {1} for {2} {3}'.format(functions.clean_float(amount), from_symbol, functions.clean_float(recv_amount), to_symbol))
 																	else:
 																		if len(Bot.db['wallet'][nick]) < config.limits.assets:
 																			Bot.db['wallet'][nick][from_symbol] -= amount
 																			Bot.db['wallet'][nick][to_symbol] = recv_amount
 																			Bot.cleanup(nick)
-																			Commands.sendmsg(chan, 'Trade successful!')
+																			Commands.sendmsg(chan, 'Trade successful!', 'Traded {0} {1} for {2} {3}'.format(functions.clean_float(amount), from_symbol, functions.clean_float(recv_amount), to_symbol))
 																		else:
 																			Commands.error(chan, f'You can\'t hold more than {config.limits.assets} assets!')
 																else:
@@ -434,13 +437,13 @@ class Events:
 																	Bot.db['wallet'][nick][from_symbol] -= amount
 																	Bot.db['wallet'][nick][to_symbol] += recv_amount
 																	Bot.cleanup(nick)
-																	Commands.sendmsg(chan, 'Trade successful!')
+																	Commands.sendmsg(chan, 'Trade successful!', 'Traded {0} {1} for {2} {3}'.format(functions.clean_float(amount), from_symbol, functions.clean_float(recv_amount), to_symbol))
 																else:
 																	if len(Bot.db['wallet'][nick]) < config.limits.assets:
 																		Bot.db['wallet'][nick][from_symbol] -= amount
 																		Bot.db['wallet'][nick][to_symbol] = recv_amount
 																		Bot.cleanup(nick)
-																		Commands.sendmsg(chan, 'Trade successful!')
+																		Commands.sendmsg(chan, 'Trade successful!', 'Traded {0} {1} for {2} {3}'.format(functions.clean_float(amount), from_symbol, functions.clean_float(recv_amount), to_symbol))
 																	else:
 																		Commands.error(chan, f'You can\'t hold more than {config.limits.assets} assets!')
 															else:
@@ -524,14 +527,14 @@ class Events:
 																	Bot.db['wallet'][nick][symbol] -= amount
 																	Bot.cleanup(nick)
 																	Commands.sendmsg(receiver, '{0} just sent you {1} {2}! {3}'.format(color(nick, constants.light_blue), functions.clean_float(fee_amount), symbol, color('({0})'.format(functions.clean_value(usd_amount)), constants.grey)))
-																	Commands.sendmsg(chan, 'Sent!')
+																	Commands.sendmsg(chan, 'Sent!', 'Sent {0} {1} to {2}'.format(functions.clean_float(fee_amount), symbol, receiver))
 																else:
 																	if len(Bot.db['wallet'][receiver]) < config.limits.assets:
 																		Bot.db['wallet'][receiver][symbol] = fee_amount
 																		Bot.db['wallet'][nick][symbol] -= amount
 																		Bot.cleanup(nick)
 																		Commands.sendmsg(receiver, '{0} just sent you {1} {2}! {3}'.format(color(nick, constants.light_blue), functions.clean_float(fee_amount), symbol, color('({0})'.format(functions.clean_value(usd_amount)), constants.grey)))
-																		Commands.sendmsg(chan, 'Sent!')
+																		Commands.sendmsg(chan, 'Sent!', 'Sent {0} {1} to {2}'.format(functions.clean_float(fee_amount), symbol, receiver))
 																	else:
 																		Commands.error(chan, f'User can\'t hold more than {config.limits.assets} assets!')
 															else:
