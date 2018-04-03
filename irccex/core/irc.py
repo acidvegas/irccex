@@ -188,7 +188,7 @@ class Events:
 										else:
 											last_amount, last_msg = Bot.db['bank'][nick]
 											if len(args) > 1:
-												cashout_msg = ' '.join(args[1:])[100:]
+												cashout_msg = ' '.join(args[1:])[:100]
 											else:
 												cashout_msg = last_msg
 											Bot.db['bank'][nick] = (last_amount+amount, cashout_msg)
@@ -277,7 +277,7 @@ class Events:
 									clean_bank[item] = Bot.db['bank'][item][0]
 								richest = sorted(clean_bank, key=clean_bank.get, reverse=True)[:10]
 								for user in richest:
-									Commands.sendmsg(chan, '[{0}] {1} {2} {3}'.format(color(richest.index(user)+1, constants.pink), user.ljust(15), color('${:,}'.format(int(Bot.db['bank'][user][0])).ljust(13), constants.green), Bot.db['bank'][user][1]))
+									Commands.sendmsg(chan, '[{0:02}] {1} {2} {3}'.format(color(richest.index(user)+1, constants.pink), user.ljust(15), color('${:,}'.format(int(Bot.db['bank'][user][0])).ljust(13), constants.green), Bot.db['bank'][user][1]))
 									time.sleep(config.throttle.msg)
 								Commands.sendmsg(chan, '^ this could be u but u playin...')
 							else:
