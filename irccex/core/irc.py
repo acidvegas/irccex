@@ -277,7 +277,7 @@ class Events:
 									clean_bank[item] = Bot.db['bank'][item][0]
 								richest = sorted(clean_bank, key=clean_bank.get, reverse=True)[:10]
 								for user in richest:
-									Commands.sendmsg(chan, '[{0:02}] {1} {2} {3}'.format(color(richest.index(user)+1, constants.pink), user.ljust(15), color('${:,}'.format(int(Bot.db['bank'][user][0])).ljust(13), constants.green), Bot.db['bank'][user][1]))
+									Commands.sendmsg(chan, '[{0}] {1} {2} {3}'.format(color('{:02}'.format(richest.index(user)+1), constants.pink), user.ljust(15), color('${:,}'.format(int(Bot.db['bank'][user][0])).ljust(13), constants.green), Bot.db['bank'][user][1]))
 									time.sleep(config.throttle.msg)
 								Commands.sendmsg(chan, '^ this could be u but u playin...')
 							else:
@@ -286,7 +286,7 @@ class Events:
 							total = 0
 							for item in Bot.db['bank']:
 								total += Bot.db['bank'][item][0]
-							Commands.sendmsg(chan, '{0} {1} {2}'.format(color('Bank       :', constants.white), '{:,}'.format(len(Bot.db['bank'])).ljust(6), color('(${:,})'.format(int(total)), constants.grey)))
+							Commands.sendmsg(chan, '{0} {1} {2}'.format(color('Bank       :', constants.white), '{:,}'.format(len(Bot.db['bank'])).ljust(5), color('(${:,})'.format(int(total)), constants.grey)))
 							Commands.sendmsg(chan, '{0} {1:,}'.format(color('Unverified :', constants.white), len(Bot.db['verify'])))
 							total = 0
 							for user in Bot.db['wallet']:
@@ -523,19 +523,19 @@ class Events:
 																	Bot.db['wallet'][receiver][symbol] += fee_amount
 																	Bot.db['wallet'][nick][symbol] -= amount
 																	Bot.cleanup(nick)
-																	Commands.sendmsg(receiver, '{0} just sent you {1} {2}! {3}'.format(color(nick, constants.light_blue), fee_amount, symbol, color('({0})'.format(functions.clean_value(usd_amount)), constants.grey)))
+																	Commands.sendmsg(receiver, '{0} just sent you {1} {2}! {3}'.format(color(nick, constants.light_blue), functions.clean_float(fee_amount), symbol, color('({0})'.format(functions.clean_value(usd_amount)), constants.grey)))
 																	Commands.sendmsg(chan, 'Sent!')
 																else:
 																	if len(Bot.db['wallet'][receiver]) < config.limits.assets:
 																		Bot.db['wallet'][receiver][symbol] = fee_amount
 																		Bot.db['wallet'][nick][symbol] -= amount
 																		Bot.cleanup(nick)
-																		Commands.sendmsg(receiver, '{0} just sent you {1} {2}! {3}'.format(color(nick, constants.light_blue), fee_amount, symbol, color('({0})'.format(functions.clean_value(usd_amount)), constants.grey)))
+																		Commands.sendmsg(receiver, '{0} just sent you {1} {2}! {3}'.format(color(nick, constants.light_blue), functions.clean_float(fee_amount), symbol, color('({0})'.format(functions.clean_value(usd_amount)), constants.grey)))
 																		Commands.sendmsg(chan, 'Sent!')
 																	else:
 																		Commands.error(chan, f'User can\'t hold more than {config.limits.assets} assets!')
 															else:
-																Commands.error(chan, 'Invalid send amount.', f'${config.limit.trade} minimum')
+																Commands.error(chan, 'Invalid send amount.', f'${config.limits.trade} minimum')
 														else:
 															Commands.error(chan, 'Insufficient funds.')
 													else:
