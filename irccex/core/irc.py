@@ -612,7 +612,7 @@ class Loops:
 	def reward():
 		while True:
 			try:
-				time.sleep(functions.random_int(3600, 10800)) # 1D - 3D
+				time.sleep(functions.random_int(86400, 259200)) # 1D - 3D
 				if not Bot.reward and not Bot.maintenance:
 					Commands.sendmsg(config.connection.channel, '[{0}] The first person to type {1} wins a prize!'.format(color('ALERT', constants.green), color('!bang', constants.light_blue)))
 					Bot.reward = True
