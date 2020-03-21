@@ -83,15 +83,16 @@ Support the project development if you like it: [Patreon.com/irccex](https://pat
 The IRCCEX project is completely open source & non-profit, though any support/pledges will help in motivation towards more development and adding new features!
 
 ###### Future Concepts & Ideas
+* Use multiple API keys to prevent rate limiting.
 * IRCCEX BlockChain - Keep an on-going ledger of every single transaction ever made in the channel. *(No idea what use it would have. Maybe a `!trades` command for recent history. The idea makes me laugh)*
 * Buying options - Spend a large sum of money on features like locking someone from trading for X amount of time (Charge Y per hour and max it to 24 hours), wallet spying, wallet bombing (sending a bunch of shitcoins), hindsight where you get private message alerts on a coins price changing (can be used whenever only once).
-* Double fees for 1-3 days randomly in round!
 * Post reward pool bangs will make you lose money to fuck with people spamming hard with bots to rack up the pool
 * Crate Drops - A "crate" will drop randomly in the channel that requires multiple `!break`'s to open it. Once opened, there will be 4 items you can get by typing the ! command under it. Items will include money, extra privlegges like holding more coins, and other items you can win.
 * **Suicide Round** - There is no bank in this mode, and if you lose your nick through a NICK or QUIT, you lose your wallet. Round can last 3-7 days and the top 10 wallets will score.
 * **Bank Round** - Round lasts a week and the top 10 players in the bank will score.
 * **Flash Match** - Round lasts a day and the top 10 players in the bank will score.
 
+###### Try it out
 We are running IRCCEX actively in **#exchange** on **EFNet** & **SuperNETs**, come chat with us, make some money, and share ideas!
 
 ###### Mirrors

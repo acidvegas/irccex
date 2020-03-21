@@ -15,7 +15,6 @@ class connection:
 
 class cert:
 	key      = None
-	file     = None
 	password = None
 
 class ident:

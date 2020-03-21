@@ -20,7 +20,7 @@ import time
 import config
 import constants
 import functions
-from cmc import CoinMarketCap
+from coinmarketcap import CoinMarketCap
 
 if config.connection.ssl:
 	import ssl
@@ -43,8 +43,8 @@ class IRC(object):
 		self.start       = time.time()
 
 	def run(self):
-		if os.path.isfile('data/db.pkl'):
-			with open('data/db.pkl', 'rb') as db_file:
+		if os.path.isfile('db.pkl'):
+			with open('db.pkl', 'rb') as db_file:
 				self.db = pickle.load(db_file)
 			print('[+] - Restored database!')
 		Loops.start_loops()
@@ -62,21 +62,19 @@ class IRC(object):
 			self.listen()
 
 	def create_socket(self):
-		family = socket.AF_INET6 if config.connection.ipv6 else socket.AF_INET
-		self.sock = socket.socket(family, socket.SOCK_STREAM)
+		self.sock = socket.socket(AF_INET6) if config.connection.ipv6 else socket.socket()
 		if config.connection.vhost:
 			self.sock.bind((config.connection.vhost, 0))
 		if config.connection.ssl:
 			ctx = ssl.SSLContext()
 			if config.cert.file:
-				ctx.load_cert_chain(config.cert.file, config.cert.key, config.cert.password)
+				ctx.load_cert_chain(config.cert.file, password=config.cert.password)
 			if config.connection.ssl_verify:
-				ctx.verify_mode = ssl.CERT_REQUIRED
+				ctx.check_hostname = True
 				ctx.load_default_certs()
+				self.sock = ctx.wrap_socket(self.sock, server_hostname=config.connection.server)
 			else:
-				ctx.check_hostname = False
-				ctx.verify_mode = ssl.CERT_NONE
-			self.sock = ctx.wrap_socket(self.sock)
+				self.sock = ctx.wrap_socket(self.sock)
 
 	def listen(self):
 		while True:
@@ -204,7 +202,7 @@ class Events:
 										Commands.sendmsg(chan, 'Cashed out {0} to your bank account! {1}'.format(color('${:,}'.format(int(amount)), constants.green), color('(current balance: ${:,})'.format(int(Bot.db['bank'][nick][0])), constants.grey)))
 							elif len(args) == 1:
 								if msg == '@irccex':
-									Commands.sendmsg(chan, constants.bold + 'IRC Cryptocurrency Exchange (IRCCEX) - Developed by acidvegas in Python - https://acid.vegas/irccex')
+									Commands.sendmsg(chan, constants.bold + 'IRC Cryptocurrency Exchange (IRCCEX) - Developed by acidvegas in Python - https://github.com/acidvegas/irccex')
 								elif msg == '@stats':
 									bank_total = 0
 									global_data = CMC._global()
@@ -501,6 +499,7 @@ class Events:
 class Loops:
 	def start_loops():
 		threading.Thread(target=Loops.backup).start()
+		threading.Thread(target=Loops.double_fees).start()
 		threading.Thread(target=Loops.maintenance).start()
 		threading.Thread(target=Loops.remind).start()
 		threading.Thread(target=Loops.reward).start()
@@ -510,10 +509,30 @@ class Loops:
 	def backup():
 		while True:
 			time.sleep(3600) # 1H
-			with open('data/db.pkl', 'wb') as db_file:
+			with open('db.pkl', 'wb') as db_file:
 				pickle.dump(Bot.db, db_file, pickle.HIGHEST_PROTOCOL)
 			Bot.last_backup = time.strftime('%I:%M')
 			print('[+] - Database backed up!')
+
+	def double_fees():
+		original_fees = {'cashout':config.fees.cashout,'send':config.fees.send,'trade':config.fees.trade}
+		while True:
+			try:
+				time.sleep(functions.random_int(604800,864000)) # 7D - 10D
+				config.fees.cashout = original_fees['cashout']*2
+				config.fees.send    = original_fees['send']*2
+				config.fees.trade   = original_fees['trade']*2
+				Commands.action(config.connection.channel, color('Double fees have been activated!', constants.red))
+				time.sleep(functions.random_int(86400, 259200)) # 1D - 3D
+				config.fees.cashout = original_fees['cashout']/2
+				config.fees.send    = original_fees['send']/2
+				config.fees.trade   = original_fees['trade']/2
+				Commands.notice(config.connection.channel, color('Double fees have been deactivated!', constants.red))
+			except Exception as ex:
+				config.fees.cashout = original_fees['cashout']
+				config.fees.send    = original_fees['send']
+				config.fees.trade   = original_fees['trade']
+				print('[!] - Error occured in the double fees loop! (' + str(ex) + ')')
 
 	def maintenance():
 		while True:
@@ -596,5 +615,5 @@ class Loops:
 			finally:
 				time.sleep(3600) # 1H
 
-CMC = CoinMarketCap()
 Bot = IRC()
+CMC = CoinMarketCap(config.CMC_API_KEY)

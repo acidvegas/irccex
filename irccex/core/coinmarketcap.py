@@ -1,24 +1,23 @@
 #!/usr/bin/env python
-# IRC Cryptocurrency Exchange (IRCCEX) - Developed by acidvegas in Python (https://acid.vegas/irccex)
-# cmc.py
+# CoinMarketCap API Class - Developed by acidvegas in Python (https://acid.vegas/coinmarketcap)
 
+import http.client
 import json
 import time
-
-import requests
-
-import config
+import zlib
 
 class CoinMarketCap(object):
-	def __init__(self):
-		self.cache = {'global':dict(), 'ticker':dict()}
-		self.last  = {'global':0     , 'ticker':0     }
+	def __init__(self, api_key):
+		self.api_key = api_key
+		self.cache   = {'global':dict(), 'ticker':dict()}
+		self.last    = {'global':0     , 'ticker':0     }
 
-	def _api(self, _endpoint, _params={}):
-		session = requests.Session()
-		session.headers.update({'Accept':'application/json', 'Accept-Encoding':'deflate, gzip', 'X-CMC_PRO_API_KEY':config.CMC_API_KEY})
-		response = session.get('https://pro-api.coinmarketcap.com/v1/' + _endpoint, params=_params, timeout=15)
-		return json.loads(response.text.replace(': null', ': "0"'))['data']
+	def _api(self, _endpoint):
+		conn = http.client.HTTPSConnection('pro-api.coinmarketcap.com', timeout=15)
+		conn.request('GET', '/v1/' + _endpoint, headers={'Accept':'application/json', 'Accept-Encoding':'deflate, gzip', 'X-CMC_PRO_API_KEY':self.api_key})
+		response = zlib.decompress(conn.getresponse().read(), 16+zlib.MAX_WBITS).decode('utf-8').replace(': null', ': "0"')
+		conn.close()
+		return json.loads(response)['data']
 
 	def _global(self):
 		if time.time() - self.last['global'] < 300:
@@ -40,7 +39,7 @@ class CoinMarketCap(object):
 		if time.time() - self.last['ticker'] < 300:
 			return self.cache['ticker']
 		else:
-			data = self._api('cryptocurrency/listings/latest', {'limit':'5000'})
+			data = self._api('cryptocurrency/listings/latest?limit=5000')
 			self.cache['ticker'] = dict()
 			for item in data:
 				self.cache['ticker'][item['symbol']] = {
