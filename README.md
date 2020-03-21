@@ -29,9 +29,11 @@ This game can introduce lots of trolling & botting. Get creative & figure out wa
 ###### Loops
 * The database will backup to a pickle file every hour. The last backup time can be seen in the `@stats` reply. Make note of this before restarting the bot for some reason.
 
-* The exchange will random enter "maintenance mode" once every 3 days, which locks the use of all exchange commands. Maintenance can last an hour to a full day.
+* The exchange will random enter "maintenance mode" randomly every 7 to 14 days, which locks the use of all exchange commands. Maintenance can last an hour to a full day.
 
 * All fees are collected & stored in the "reward pool". The bot will make an announcement randomly before the round ends & anyone who types `!bang` after that will get a reward taken from the pool. It takes 25 to 50 `!bang`'s to completely empty the pool. The final person to `!bang` will get the largest reward.
+
+* Double fees mode will be activated randomly every 7 to 10 days, which will double the fees for cashout, trade, and send usage, and can last for 1 to 3 days.
 
 ###### Trading Pair Rules
 - USD can only be used for buying or selling BTC, ETH, & LTC.
