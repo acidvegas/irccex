@@ -6,6 +6,14 @@ import json
 import time
 import zlib
 
+def replace_nulls(json_elem):
+	if isinstance(json_elem, list):
+		return [replace_nulls(elem) for elem in json_elem]
+	elif isinstance(json_elem, dict):
+		return {key: replace_nulls(value) for key, value in json_elem.items()}
+	else:
+		return '0' if json_elem is None else json_elem
+
 class CoinMarketCap(object):
 	def __init__(self, api_key):
 		self.api_key = api_key
@@ -15,7 +23,7 @@ class CoinMarketCap(object):
 	def _api(self, _endpoint):
 		conn = http.client.HTTPSConnection('pro-api.coinmarketcap.com', timeout=15)
 		conn.request('GET', '/v1/' + _endpoint, headers={'Accept':'application/json', 'Accept-Encoding':'deflate, gzip', 'X-CMC_PRO_API_KEY':self.api_key})
-		response = zlib.decompress(conn.getresponse().read(), 16+zlib.MAX_WBITS).decode('utf-8').replace(': null', ': "0"')
+		response = zlib.decompress(conn.getresponse().read(), 16+zlib.MAX_WBITS).decode('utf-8')
 		conn.close()
 		return json.loads(response)['data']
 
@@ -40,6 +48,7 @@ class CoinMarketCap(object):
 			return self.cache['ticker']
 		else:
 			data = self._api('cryptocurrency/listings/latest?limit=5000')
+			data = replace_nulls(data)
 			self.cache['ticker'] = dict()
 			for item in data:
 				self.cache['ticker'][item['symbol']] = {
