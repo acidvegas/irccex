@@ -36,7 +36,7 @@ This game can introduce lots of trolling & botting. Get creative & figure out wa
 * Double fees mode will be activated randomly every 7 to 10 days, which will double the fees for cashout, trade, and send usage, and can last for 1 to 3 days.
 
 ###### Trading Pair Rules
-- USD can only be used for buying or selling BTC, ETH, & LTC.
+- USD can only be used for buying or selling BTC & ETH.
 
 - BTC & ETH are the only major trading pairs between all other cryptocurrencies.
 
@@ -85,7 +85,7 @@ Support the project development if you like it: [Patreon.com/irccex](https://pat
 The IRCCEX project is completely open source & non-profit, though any support/pledges will help in motivation towards more development and adding new features!
 
 ###### Future Concepts & Ideas
-* Use multiple API keys to prevent rate limiting.
+* Include a seperate bot for just trading stocks (include options trading, dividends, etc)
 * IRCCEX BlockChain - Keep an on-going ledger of every single transaction ever made in the channel. *(No idea what use it would have. Maybe a `!trades` command for recent history. The idea makes me laugh)*
 * Buying options - Spend a large sum of money on features like locking someone from trading for X amount of time (Charge Y per hour and max it to 24 hours), wallet spying, wallet bombing (sending a bunch of shitcoins), hindsight where you get private message alerts on a coins price changing (can be used whenever only once).
 * Post reward pool bangs will make you lose money to fuck with people spamming hard with bots to rack up the pool

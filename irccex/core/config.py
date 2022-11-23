@@ -44,5 +44,3 @@ class fees:
 	cashout = 0.02  # 2%
 	send    = 0.01  # 1%
 	trade   = 0.001 # 0.1%
-
-CMC_API_KEY = 'CHANGEME' # https://pro.coinmarketcap.com/signup

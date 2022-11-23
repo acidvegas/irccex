@@ -326,9 +326,17 @@ class Events:
 										total = 0
 										for symbol in Bot.db['wallet'][nick]:
 											amount = Bot.db['wallet'][nick][symbol]
-											value = amount if symbol == 'USD' else CMC._ticker()[symbol]['price']*amount
-											Commands.sendmsg(chan, f' {symbol.ljust(8)} | {str(functions.clean_float(amount)).rjust(20)} | {str(functions.clean_value(value)).rjust(20)}')
-											total += float(value)
+											if symbol == 'USD':
+												value = amount
+											elif symbol in CMC._ticker():
+												value = CMC._ticker()[symbol]['price']*amount
+											else: # CLEAN THIS UP - TEMP FIX FOR ERRORS ON !wallet reported by sht, ji, and others...
+												value = 'JACKED'
+											if value == 'JACKED':
+												Commands.sendmsg(chan, symbol + ' was JACKED sucka!')
+											else:
+												Commands.sendmsg(chan, f' {symbol.ljust(8)} | {str(functions.clean_float(amount)).rjust(20)} | {str(functions.clean_value(value)).rjust(20)}')
+												total += float(value)
 										Commands.sendmsg(chan, color(f'                      Total: {str(functions.clean_value(total)).rjust(27)}', constants.black, constants.light_grey))
 							elif len(args) == 2:
 								if args[0] in ('!bottom','!top'):
