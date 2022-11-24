@@ -16,6 +16,7 @@ class connection:
 class cert:
 	key      = None
 	password = None
+	file = None
 
 class ident:
 	nickname = 'IRCCEX'
@@ -44,3 +45,5 @@ class fees:
 	cashout = 0.02  # 2%
 	send    = 0.01  # 1%
 	trade   = 0.001 # 0.1%
+	
+CMC_API_KEY = 'CHANGEME'
