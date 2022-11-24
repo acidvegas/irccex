@@ -334,6 +334,7 @@ class Events:
 												value = 'JACKED'
 											if value == 'JACKED':
 												Commands.sendmsg(chan, symbol + ' was JACKED sucka!')
+												del Bot.db['wallet'][nick][symbol]
 											else:
 												Commands.sendmsg(chan, f' {symbol.ljust(8)} | {str(functions.clean_float(amount)).rjust(20)} | {str(functions.clean_value(value)).rjust(20)}')
 												total += float(value)
