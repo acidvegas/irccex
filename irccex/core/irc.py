@@ -77,10 +77,20 @@ class IRC(object):
 				self.sock = ctx.wrap_socket(self.sock)
 
 	def listen(self):
+		buffer = str()
+		last   = time.time()
 		while True:
 			try:
-				data = self.sock.recv(2048).decode('utf-8')
-				for line in (line for line in data.split('\r\n') if line):
+				data = self.sock.recv(1024).decode('utf-8')
+				buffer += data
+				if data:
+					last = time.time()
+				else:
+					if time.time() - last > 120:
+						break
+				while '\r\n' in buffer:
+					line    = buffer.split('\r\n')[0]
+					buffer  = buffer.split('\r\n', 1)[1]
 					print('[~] - ' + line)
 					if len(line.split()) >= 2:
 						Events.handle(line)
