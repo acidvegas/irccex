@@ -41,40 +41,40 @@ This game can introduce lots of trolling & botting. Get creative & figure out wa
 - BTC & ETH are the only major trading pairs between all other cryptocurrencies.
 
 ###### Fees & Minimums
-| Command | Fee | Minimum |
-| --- | --- | --- |
-| cashout | 2% | $10000 USD Balance |
-| send | 1% | $5000 Balance |
-| trade | 0.1% | $5 |
+| Command | Fee  | Minimum            |
+| ------- | ---- | ------------------ |
+| cashout | 2%   | $10000 USD Balance |
+| send    | 1%   | $5000 Balance      |
+| trade   | 0.1% | $5                 |
 
 ###### Exchange Commands
-| Command | Description |
-| --- | --- |
-| @irccex | Information about the bot. |
-| @stats | Statistics on the exchange, market, and more. |
-| $\<symbol> | Return information for the \<symbol> cryptocurrency. *(\<symbol> can also be a comma seperated list)* |
-| !bang | Grab a reward when the reward pool is triggered. |
-| !bank | Return your total bank account balance. |
-| !bottom \<1h/24h/7d/value/volume> | Return information for the bottom 10 cryptocurrencies based on the \<1h/24h/7d/value>. |
-| !cashout [msg] | Deposit all your USD to your bank account and optionally leave the [msg] message for the !rich list. |
-| !portfolio | Total USD value of your wallet. |
-| !register | Register an exchange account. |
-| !rich | Return the top 10 richest bank accounts. |
-| !score | Return your score & rank on the leaderboard. |
-| !scores | Return the top 10 players on the leaderboard. |
-| !send \<nick> \<amount> \<symbol> | Send \<amount> of \<symbol> to \<nick>. |
-| !top [\<1h/24h/7d/value/volume>] | Return information for the top 10 cryptocurrencies, optionally based on \<1h/24h/7d/value/volume>. |
-| !trade \<pair> \<amount> | Trade \<amount> between \<pair>. |
-| !value \<amount> \<name> | Convert \<amount> of the \<name> cryptocurrency to it's value. |
-| !wallet | View your exchange wallet. |
+| Command                            | Description                                                                                              |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `@irccex`                          | Information about the bot.                                                                               |
+| `@stats`                           | Statistics on the exchange, market, and more.                                                            |
+| `$<symbol>`                        | Return information for the `<symbol>` cryptocurrency. *(`<symbol>` can also be a comma seperated list)*  |
+| `!bang`                            | Grab a reward when the reward pool is triggered.                                                         |
+| `!bank`                            | Return your total bank account balance.                                                                  |
+| `!bottom <1h/24h/7d/value/volume>` | Return information for the bottom 10 cryptocurrencies based on the `<1h/24h/7d/value>`.                  |
+| `!cashout [msg]`                   | Deposit all your USD to your bank account and optionally leave the `[msg]` message for the `!rich` list. |
+| `!portfolio`                       | Total USD value of your wallet.                                                                          |
+| `!register`                        | Register an exchange account.                                                                            |
+| `!rich`                            | Return the top 10 richest bank accounts.                                                                 |
+| `!score`                           | Return your score & rank on the leaderboard.                                                             |
+| `!scores`                          | Return the top 10 players on the leaderboard.                                                            |
+| `!send <nick> <amount> <symbol>`   | Send `<amount>` of `<symbol>` to `<nick>`.                                                               |
+| `!top [<1h/24h/7d/value/volume>]`  | Return information for the top 10 cryptocurrencies, optionally based on `<1h/24h/7d/value/volume>`.      |
+| `!trade <pair> <amount>`           | Trade `<amount>` between `<pair>`.                                                                       |
+| `!value <amount> <name>`           | Convert `<amount>` of the `<name>` cryptocurrency to it's value.                                         |
+| `!wallet`                          | View your exchange wallet.                                                                               |
 
-- \<amount> can be the symbols amount, USD amount if prefixed with a $, or the total amount you hold if * is used.
+- `<amount>` can be the symbols amount, USD amount if prefixed with a $, or the total amount you hold if * is used.
 	* `!send acidvegas 0.05 BTC` sends 0.05 BTC to acidvegas.
 	* `!send chrono $10.00 BTC` sends $10.00 worth of BTC to chrono.
 	* `!send mikejonez * BTC` sends all of your BTC to mikejonez.
 	* `!send vap0r 1,000,000 USD` commas can also be used in the amount.
 
-- \<pair> is the from_symbol/to_symbol you are wanting to make trades with.
+- `<pair>` is the `from_symbol/to_symbol` you are wanting to make trades with.
 	* `!trade ETH/NANO 0.14` trades 0.14 ETH to NANO.
 	* `!trade XRP/BTC $100` trades $100 USD worth of XRP to BTC.
 	* `!trade ETH/DOGE *` trades all of your ETH to DOGE.
@@ -93,11 +93,13 @@ The IRCCEX project is completely open source & non-profit, though any support/pl
 * **Suicide Round** - There is no bank in this mode, and if you lose your nick through a NICK or QUIT, you lose your wallet. Round can last 3-7 days and the top 10 wallets will score.
 * **Bank Round** - Round lasts a week and the top 10 players in the bank will score.
 * **Flash Match** - Round lasts a day and the top 10 players in the bank will score.
+* Need to handle coins that get removed or renamed as it breaks wallet outputs.
 
 ###### Try it out
 We are running IRCCEX actively in **#exchange** on **EFNet** & **SuperNETs**, come chat with us, make some money, and share ideas!
 
 ###### Mirrors
-- [acid.vegas](https://acid.vegas/irccex) *(main)*
+- [acid.vegas](https://acid.vegas/irccex)
 - [GitHub](https://github.com/acidvegas/irccex)
 - [GitLab](https://gitlab.com/acidvegas/irccex)
+- [SuperNETs](https://git.supernets.org/acidvegas/irccex)
