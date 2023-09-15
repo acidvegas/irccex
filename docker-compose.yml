@@ -1,0 +1,5 @@
+services:
+  irccex:
+    build: .
+    volumes:
+      - ./irccex:/src

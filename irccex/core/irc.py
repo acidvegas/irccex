@@ -332,7 +332,7 @@ class Events:
 										Commands.sendmsg(chan, line)
 								elif msg == '!wallet':
 									if Commands.check_nick(nick, chan):
-										Commands.sendmsg(chan, color('  Symbol          Amount                  Value        ', constants.black, constants.light_grey))
+										Commands.sendmsg(chan, color('  Symbol        Amount               Value                  Change                ', constants.black, constants.light_grey))
 										total = 0
 										for symbol in Bot.db['wallet'][nick]:
 											amount = Bot.db['wallet'][nick][symbol]
@@ -346,9 +346,13 @@ class Events:
 												Commands.sendmsg(chan, symbol + ' was JACKED sucka!')
 												del Bot.db['wallet'][nick][symbol]
 											else:
-												Commands.sendmsg(chan, f' {symbol.ljust(8)} | {str(functions.clean_float(amount)).rjust(20)} | {str(functions.clean_value(value)).rjust(20)}')
-												total += float(value)
-										Commands.sendmsg(chan, color(f'                      Total: {str(functions.clean_value(total)).rjust(27)}', constants.black, constants.light_grey))
+												try:
+													Commands.sendmsg(chan, f' {symbol.ljust(7)} | {str(functions.clean_float(amount)).rjust(17)} | {str(functions.clean_value(value)).rjust(18)} | {str(functions.clean_percent(CMC._ticker()[symbol])).rjust(26)} ')
+													total += float(value)
+												except:
+													Commands.sendmsg(chan, f' {symbol.ljust(7)} | {str(functions.clean_float(amount)).rjust(17)} | {str(functions.clean_value(value)).rjust(18)} | {str("N/A").ljust(26)} ')
+													total += float(value)	
+										Commands.sendmsg(chan, color(f'                Total:{str(functions.clean_value(total)).rjust(27)}                                 ', constants.black, constants.light_grey))
 							elif len(args) == 2:
 								if args[0] in ('!bottom','!top'):
 									option  = args[1].lower()
@@ -527,7 +531,7 @@ class Loops:
 
 	def backup():
 		while True:
-			time.sleep(3600) # 1H
+			time.sleep(1800) # 30M
 			with open('db.pkl', 'wb') as db_file:
 				pickle.dump(Bot.db, db_file, pickle.HIGHEST_PROTOCOL)
 			Bot.last_backup = time.strftime('%I:%M')
