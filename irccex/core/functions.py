@@ -38,6 +38,13 @@ def clean_value(value):
 	else:
 		return '${:,}'.format(int(value))
 
+def clean_percent(data):
+	perc_1h  = color('{:,.2f}%'.format(data['percent']['1h']), percent_color(data['percent']['1h']))
+	perc_24h = color('{:,.2f}%'.format(data['percent']['24h']), percent_color(data['percent']['24h']))
+	perc_7d  = color('{:,.2f}%'.format(data['percent']['7d']), percent_color(data['percent']['7d']))
+	percent  = color('/', constants.grey).join((perc_1h,perc_24h,perc_7d))
+	return percent
+
 def coin_info(data):
 	sep      = color('|', constants.grey)
 	sep2     = color('/', constants.grey)
