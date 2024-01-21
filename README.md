@@ -98,8 +98,6 @@ The IRCCEX project is completely open source & non-profit, though any support/pl
 ###### Try it out
 We are running IRCCEX actively in **#exchange** on **EFNet** & **SuperNETs**, come chat with us, make some money, and share ideas!
 
-###### Mirrors
-- [acid.vegas](https://acid.vegas/irccex)
-- [GitHub](https://github.com/acidvegas/irccex)
-- [GitLab](https://gitlab.com/acidvegas/irccex)
-- [SuperNETs](https://git.supernets.org/acidvegas/irccex)
+___
+
+###### Mirrors for this repository: [acid.vegas](https://git.acid.vegas/irccex) • [SuperNETs](https://git.supernets.org/acidvegas/irccex) • [GitHub](https://github.com/acidvegas/irccex) • [GitLab](https://gitlab.com/acidvegas/irccex) • [Codeberg](https://codeberg.org/acidvegas/irccex)

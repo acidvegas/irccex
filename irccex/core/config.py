@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-# IRC Cryptocurrency Exchange (IRCCEX) - Developed by acidvegas in Python (https://acid.vegas/irccex)
+# IRC Cryptocurrency Exchange (IRCCEX) - Developed by acidvegas in Python (https://git.acid.vegas/irccex)
 # config.py
 
 class connection:
 	server     = 'irc.server.com'
-	port       = 6667
+	port       = 6697
 	ipv6       = False
-	ssl        = False
+	ssl        = True
 	ssl_verify = False
 	vhost      = None
 	channel    = '#exchange'
@@ -21,7 +21,7 @@ class cert:
 class ident:
 	nickname = 'IRCCEX'
 	username = 'exchange'
-	realname = 'acid.vegas/irccex'
+	realname = 'git.acid.vegas/irccex'
 
 class login:
 	network  = None

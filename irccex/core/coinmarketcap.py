@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# CoinMarketCap API Class - Developed by acidvegas in Python (https://acid.vegas/coinmarketcap)
+# CoinMarketCap API Class - Developed by acidvegas in Python (https://git.acid.vegas/coinmarketcap)
 
 import http.client
 import json

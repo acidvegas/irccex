@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# IRC Cryptocurrency Exchange (IRCCEX) - Developed by acidvegas in Python (https://acid.vegas/irccex)
+# IRC Cryptocurrency Exchange (IRCCEX) - Developed by acidvegas in Python (https://git.acid.vegas/irccex)
 # constants.py
 
 # Control Characters
